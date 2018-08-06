@@ -76,10 +76,10 @@ function! s:open_buffer_dmenu(cmd)
     endif
 endfunction
 
-nnoremap <silent> <Plug>DmenuEdit :call <SID>open_file_dmenu("edit")<CR>
-nnoremap <silent> <Plug>DmenuSplit :call <SID>open_file_dmenu("split")<CR>
-nnoremap <silent> <Plug>DmenuVsplit :call <SID>open_file_dmenu("vsplit")<CR>
+nnoremap <silent> <Plug>DmenuEdit :<C-U> call <SID>open_file_dmenu("edit")<CR>
+nnoremap <silent> <Plug>DmenuSplit :<C-U> call <SID>open_file_dmenu("split")<CR>
+nnoremap <silent> <Plug>DmenuVsplit :<C-U> call <SID>open_file_dmenu("vsplit")<CR>
 
-nnoremap <silent> <Plug>DmenuBuf :call <SID>open_buffer_dmenu("buf")<CR>
-nnoremap <silent> <Plug>DmenuSbuf :call <SID>open_buffer_dmenu("sbuf")<CR>
-nnoremap <silent> <Plug>DmenuVertSbuf :call <SID>open_buffer_dmenu("vert sbuf")<CR>
+nnoremap <silent> <Plug>DmenuBuf :<C-U> call <SID>open_buffer_dmenu("buf")<CR>
+nnoremap <silent> <Plug>DmenuSbuf :<C-U> call <SID>open_buffer_dmenu("sbuf")<CR>
+nnoremap <silent> <Plug>DmenuVertSbuf :<C-U> call <SID>open_buffer_dmenu("vert sbuf")<CR>
