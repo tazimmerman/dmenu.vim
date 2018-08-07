@@ -9,6 +9,7 @@ endif
 
 let g:loaded_dmenu = 1
 
+""" Repo Utilities {{{
 function! s:is_repo(currpath, repotype)
     let fp = a:currpath . (a:currpath == '/' ? '' : '/') . '.' . a:repotype
 
@@ -66,7 +67,9 @@ function! s:get_cwd()
     let fp = len(fp) == 0 ? getcwd() : fp
     return fp
 endfunction
+" }}}
 
+" Dmenu Configuration {{{
 function! s:get_dmenu_cfg()
     if !exists("g:dmenu")
         let g:dmenu = {}
@@ -118,21 +121,24 @@ function! s:get_dmenu_cfg()
 
     return g:dmenu
 endfunction
+" }}}
 
-function! s:get_dmenu_cmd(prompt)
-    let cfg = s:get_dmenu_cfg()
+" Dmenu Command {{{
+function! s:get_dmenu_cmd(cfg, prompt)
     let cmd = "dmenu "
-    let cmd .= get(cfg, 'bottom_menu') ? " -b" : ""
-    let cmd .= get(cfg, 'case_insensitive') ? " -i" : ""
-    let cmd .= " -l " . get(cfg, 'max_lines')
-    let cmd .= " -nb \"" . get(cfg, 'menu_bg') . "\""
-    let cmd .= " -nf \"" . get(cfg, 'menu_fg') . "\""
-    let cmd .= " -sb \"" . get(cfg, 'select_bg') . "\""
-    let cmd .= " -sf \"" . get(cfg, 'select_fg') . "\""
+    let cmd .= get(a:cfg, 'bottom_menu') ? " -b" : ""
+    let cmd .= get(a:cfg, 'case_insensitive') ? " -i" : ""
+    let cmd .= " -l " . get(a:cfg, 'max_lines')
+    let cmd .= " -nb \"" . get(a:cfg, 'menu_bg') . "\""
+    let cmd .= " -nf \"" . get(a:cfg, 'menu_fg') . "\""
+    let cmd .= " -sb \"" . get(a:cfg, 'select_bg') . "\""
+    let cmd .= " -sf \"" . get(a:cfg, 'select_fg') . "\""
     let cmd .= " -p " . a:prompt
     return cmd
 endfunction
+" }}}
 
+" File Search {{{
 function! s:get_find_cmd(cfg, repo)
     if len(a:repo) == 0
         return get(a:cfg, 'default_cmd')
@@ -155,12 +161,8 @@ function! s:get_file_cmd(repo, prompt)
     let cfg = s:get_dmenu_cfg()
     let cmd = s:get_find_cmd(cfg, a:repo)
     let cmd .= " | "
-    let cmd .= s:get_dmenu_cmd(a:prompt)
+    let cmd .= s:get_dmenu_cmd(cfg, a:prompt)
     return cmd
-endfunction
-
-function! s:get_buffer_cmd(prompt)
-    return s:get_dmenu_cmd(a:prompt)
 endfunction
 
 function! s:open_file_dmenu(cmd)
@@ -183,9 +185,16 @@ function! s:open_file_dmenu(cmd)
         exec a:cmd . " " . fn
     endif
 endfunction
+" }}}
 
+" Buffer Search {{{
 function! s:get_listed_buffer_names()
     return map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), 'bufname(v:val)')
+endfunction
+
+function! s:get_buffer_cmd(prompt)
+    let cfg = s:get_dmenu_cfg()
+    return s:get_dmenu_cmd(cfg, a:prompt)
 endfunction
 
 function! s:open_buffer_dmenu(cmd)
@@ -197,7 +206,9 @@ function! s:open_buffer_dmenu(cmd)
         exec a:cmd . " " . fn
     endif
 endfunction
+" }}}
 
+" Plugin API {{{
 nnoremap <silent> <Plug>DmenuEdit :<C-U> call <SID>open_file_dmenu("edit")<CR>
 nnoremap <silent> <Plug>DmenuSplit :<C-U> call <SID>open_file_dmenu("split")<CR>
 nnoremap <silent> <Plug>DmenuVsplit :<C-U> call <SID>open_file_dmenu("vsplit")<CR>
@@ -205,6 +216,11 @@ nnoremap <silent> <Plug>DmenuVsplit :<C-U> call <SID>open_file_dmenu("vsplit")<C
 nnoremap <silent> <Plug>DmenuBuf :<C-U> call <SID>open_buffer_dmenu("buf")<CR>
 nnoremap <silent> <Plug>DmenuSbuf :<C-U> call <SID>open_buffer_dmenu("sbuf")<CR>
 nnoremap <silent> <Plug>DmenuVertSbuf :<C-U> call <SID>open_buffer_dmenu("vert sbuf")<CR>
+" }}}
 
+" Debug Commands {{{
 command! -nargs=0 DmenuGetCwd :echo <SID>get_cwd()
 command! -nargs=0 DmenuGetRepoInfo :echo <SID>get_repo_info(<SID>get_cwd())
+" }}}
+
+" vim: foldmethod=marker
