@@ -46,6 +46,7 @@ function! s:get_repo_info(filepath)
                 endif
             endwhile
 
+            " Repo info was found; don't move to the next type.
             if len(repoinfo) != 0
                 break
             endif
@@ -140,6 +141,16 @@ function! s:get_find_cmd(cfg, repo)
     endif
 endfunction
 
+function! s:save_opts()
+    let s:saved_opts = {}
+    let s:saved_opts.cdpath = &cdpath
+    let &cdpath = ''
+endfunction
+
+function! s:restore_opts()
+    let &cdpath = get(s:saved_opts, 'cdpath')
+endfunction
+
 function! s:get_file_cmd(prompt)
     let cfg = s:get_dmenu_cfg()
     let cwd = s:get_cwd()
@@ -156,7 +167,14 @@ endfunction
 
 function! s:open_file_dmenu(cmd)
     let cmd = s:get_file_cmd(a:cmd)
-    let fn = substitute(system(cmd), '\n$', '', '')
+    call s:save_opts()
+
+    try
+        let fn = substitute(system(cmd), '\n$', '', '')
+    finally
+        call s:restore_opts()
+    endtry
+
     if !empty(fn)
         exec a:cmd . " " . fn
     endif
@@ -170,6 +188,7 @@ function! s:open_buffer_dmenu(cmd)
     let cmd = s:get_buffer_cmd(a:cmd)
     let buffers = s:get_listed_buffer_names()
     let fn = substitute(system(cmd, buffers), '\n$', '', '')
+
     if !empty(fn)
         exec a:cmd . " " . fn
     endif
