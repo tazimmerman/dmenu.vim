@@ -9,16 +9,19 @@ endif
 
 let g:loaded_dmenu = 1
 
-function! s:is_repo(filepath)
+function! s:get_repo(filepath)
     if len(a:filepath) != 0
-        for marker in ['.git', '.hg', '.svn']
+        for type in ['git', 'hg', 'svn']
             let currpath = a:filepath
             while 1
                 let prevpath = currpath
                 let currpath = fnamemodify(currpath, ':h')
-                let filename = currpath . (currpath == '/' ? '' : '/') . marker
+                let filename = currpath . (currpath == '/' ? '' : '/') . "." . type
                 if filereadable(filename) || isdirectory(filename)
-                    return 1
+                    let info = {}
+                    let info.repo_path = filename
+                    let info.repo_type = type
+                    return info
                 endif
                 if currpath == prevpath
                     break
@@ -26,7 +29,7 @@ function! s:is_repo(filepath)
             endwhile
         endfor
     endif
-    return 0
+    return {}
 endfunction
 
 function! s:get_cwd()
@@ -40,8 +43,20 @@ function! s:get_dmenu_cfg()
         let g:dmenu = {}
     endif
 
-    if !has_key(g:dmenu, 'cmd')
+    if !has_key(g:dmenu, 'default_cmd')
         let g:dmenu.cmd='find .'
+    endif
+
+    if !has_key(g:dmenu, 'git_cmd')
+        let g:dmenu.git_cmd = 'git ls-files'
+    endif
+
+    if !has_key(g:dmenu, 'hg_cmd')
+        let g:dmenu.hg_cmd = 'hg manifest'
+    endif
+
+    if !has_key(g:dmenu, 'svn_cmd')
+        let g:dmenu.svn_cmd = 'svn list'
     endif
 
     if !has_key(g:dmenu, 'menu_bg')
@@ -89,10 +104,19 @@ function! s:get_dmenu_cmd(prompt)
     return cmd
 endfunction
 
+function! s:get_find_cmd(cfg, repo)
+    if len(a:repo) == 0
+        return get(a:cfg, 'default_cmd')
+    else
+        return get(a:cfg, get(a:repo, 'repo_type') . '_cmd')
+    endif
+endfunction
+
 function! s:get_file_cmd(prompt)
     let cfg = s:get_dmenu_cfg()
     let cwd = s:get_cwd()
-    let cmd = s:is_repo(cwd) ? get(cfg, 'cmd') : 'find .'
+    let repo = s:get_repo(cwd)
+    let cmd = s:get_find_cmd(cfg, repo)
     let cmd .= " | "
     let cmd .= s:get_dmenu_cmd(a:prompt)
     return cmd
@@ -132,4 +156,4 @@ nnoremap <silent> <Plug>DmenuSbuf :<C-U> call <SID>open_buffer_dmenu("sbuf")<CR>
 nnoremap <silent> <Plug>DmenuVertSbuf :<C-U> call <SID>open_buffer_dmenu("vert sbuf")<CR>
 
 command! -nargs=0 DmenuGetCwd :echo <SID>get_cwd()
-command! -nargs=0 DmenuIsRepo :echo <SID>is_repo(<SID>get_cwd())
+command! -nargs=0 DmenuIsRepo :echo <SID>get_repo(<SID>get_cwd())
