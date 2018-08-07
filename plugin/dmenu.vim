@@ -151,11 +151,9 @@ function! s:restore_opts()
     let &cdpath = get(s:saved_opts, 'cdpath')
 endfunction
 
-function! s:get_file_cmd(prompt)
+function! s:get_file_cmd(repo, prompt)
     let cfg = s:get_dmenu_cfg()
-    let cwd = s:get_cwd()
-    let repo = s:get_repo_info(cwd)
-    let cmd = s:get_find_cmd(cfg, repo)
+    let cmd = s:get_find_cmd(cfg, a:repo)
     let cmd .= " | "
     let cmd .= s:get_dmenu_cmd(a:prompt)
     return cmd
@@ -166,10 +164,16 @@ function! s:get_buffer_cmd(prompt)
 endfunction
 
 function! s:open_file_dmenu(cmd)
-    let cmd = s:get_file_cmd(a:cmd)
+    let cwd = s:get_cwd()
+    let repo = s:get_repo_info(cwd)
+    let cmd = s:get_file_cmd(repo, a:cmd)
     call s:save_opts()
 
     try
+        if len(repo) != 0
+            exec 'cd '. get(repo, 'repo_path')
+        endif
+
         let fn = substitute(system(cmd), '\n$', '', '')
     finally
         call s:restore_opts()
@@ -204,3 +208,5 @@ nnoremap <silent> <Plug>DmenuVertSbuf :<C-U> call <SID>open_buffer_dmenu("vert s
 
 command! -nargs=0 DmenuGetCwd :echo <SID>get_cwd()
 command! -nargs=0 DmenuGetRepoInfo :echo <SID>get_repo_info(<SID>get_cwd())
+command! -nargs=0 DmenuSaveOpts :call <SID>save_opts()
+command! -nargs=0 DmenuRestoreOpts :call <SID>restore_opts()
