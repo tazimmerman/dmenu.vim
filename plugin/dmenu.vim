@@ -9,6 +9,32 @@ endif
 
 let g:loaded_dmenu = 1
 
+function! s:is_repo(filepath)
+    if len(a:filepath) != 0
+        for marker in ['.git', '.hg', '.svn']
+            let currpath = a:filepath
+            while 1
+                let prevpath = currpath
+                let currpath = fnamemodify(currpath, ':h')
+                let filename = currpath . (currpath == '/' ? '' : '/') . marker
+                if filereadable(filename) || isdirectory(filename)
+                    return 1
+                endif
+                if currpath == prevpath
+                    break
+                endif
+            endwhile
+        endfor
+    endif
+    return 0
+endfunction
+
+function! s:get_cwd()
+    let fp = resolve(expand('%:p'))
+    let fp = len(fp) == 0 ? getcwd() : fp
+    return fp
+endfunction
+
 function! s:get_dmenu_cfg()
     if !exists("g:dmenu")
         let g:dmenu = {}
@@ -45,14 +71,15 @@ endfunction
 
 function! s:get_file_cmd(prompt)
     let cfg = s:get_dmenu_cfg()
-    let cmd = get(cfg, 'cmd')
+    let cwd = s:get_cwd()
+    let cmd = s:is_repo(cwd) ? get(cfg, 'cmd') : 'find .'
     let cmd .= " | "
     let cmd .= s:get_dmenu_cmd(a:prompt)
     return cmd
 endfunction
 
 function! s:get_buffer_cmd(prompt)
-    return <SID>get_dmenu_cmd(a:prompt)
+    return s:get_dmenu_cmd(a:prompt)
 endfunction
 
 function! s:open_file_dmenu(cmd)
@@ -68,8 +95,8 @@ function! s:get_listed_buffer_names()
 endfunction
 
 function! s:open_buffer_dmenu(cmd)
-    let cmd = <SID>get_buffer_cmd(a:cmd)
-    let buffers = <SID>get_listed_buffer_names()
+    let cmd = s:get_buffer_cmd(a:cmd)
+    let buffers = s:get_listed_buffer_names()
     let fn = substitute(system(cmd, buffers), '\n$', '', '')
     if !empty(fn)
         exec a:cmd . " " . fn
