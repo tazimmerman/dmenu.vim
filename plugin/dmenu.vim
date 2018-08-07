@@ -208,5 +208,3 @@ nnoremap <silent> <Plug>DmenuVertSbuf :<C-U> call <SID>open_buffer_dmenu("vert s
 
 command! -nargs=0 DmenuGetCwd :echo <SID>get_cwd()
 command! -nargs=0 DmenuGetRepoInfo :echo <SID>get_repo_info(<SID>get_cwd())
-command! -nargs=0 DmenuSaveOpts :call <SID>save_opts()
-command! -nargs=0 DmenuRestoreOpts :call <SID>restore_opts()
