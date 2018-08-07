@@ -44,16 +44,32 @@ function! s:get_dmenu_cfg()
         let g:dmenu.cmd='find .'
     endif
 
-    if !has_key(g:dmenu, 'bg')
-        let g:dmenu.bg=synIDattr(synIDtrans(hlID('Normal')), 'bg')
+    if !has_key(g:dmenu, 'menu_bg')
+        let g:dmenu.menu_bg = synIDattr(synIDtrans(hlID('Pmenu')), 'bg')
     endif
 
-    if !has_key(g:dmenu, 'fg')
-        let g:dmenu.fg=synIDattr(synIDtrans(hlID('Normal')), 'fg')
+    if !has_key(g:dmenu, 'menu_fg')
+        let g:dmenu.menu_fg = synIDattr(synIDtrans(hlID('Pmenu')), 'fg')
     endif
 
-    if !has_key(g:dmenu, 'lines')
-        let g:dmenu.lines=10
+    if !has_key(g:dmenu, 'select_bg')
+        let g:dmenu.select_bg = synIDattr(synIDtrans(hlID('PmenuSel')), 'bg')
+    endif
+
+    if !has_key(g:dmenu, 'select_fg')
+        let g:dmenu.select_fg = synIDattr(synIDtrans(hlID('PmenuSel')), 'fg')
+    endif
+
+    if !has_key(g:dmenu, 'max_lines')
+        let g:dmenu.max_lines = 10
+    endif
+
+    if !has_key(g:dmenu, 'bottom_menu')
+        let g:dmenu.bottom_menu = 0
+    endif
+
+    if !has_key(g:dmenu, 'case_insensitive')
+        let g:dmenu.case_insensitive = 1
     endif
 
     return g:dmenu
@@ -61,10 +77,14 @@ endfunction
 
 function! s:get_dmenu_cmd(prompt)
     let cfg = s:get_dmenu_cfg()
-    let cmd = "dmenu -b -i"
-    let cmd .= " -l " . get(cfg, 'lines')
-    let cmd .= " -nb \"" . get(cfg, 'bg') . "\""
-    let cmd .= " -nf \"" . get(cfg, 'fg') . "\""
+    let cmd = "dmenu "
+    let cmd .= get(cfg, 'bottom_menu') ? " -b" : ""
+    let cmd .= get(cfg, 'case_insensitive') ? " -i" : ""
+    let cmd .= " -l " . get(cfg, 'max_lines')
+    let cmd .= " -nb \"" . get(cfg, 'menu_bg') . "\""
+    let cmd .= " -nf \"" . get(cfg, 'menu_fg') . "\""
+    let cmd .= " -sb \"" . get(cfg, 'select_bg') . "\""
+    let cmd .= " -sf \"" . get(cfg, 'select_fg') . "\""
     let cmd .= " -p " . a:prompt
     return cmd
 endfunction
@@ -110,3 +130,6 @@ nnoremap <silent> <Plug>DmenuVsplit :<C-U> call <SID>open_file_dmenu("vsplit")<C
 nnoremap <silent> <Plug>DmenuBuf :<C-U> call <SID>open_buffer_dmenu("buf")<CR>
 nnoremap <silent> <Plug>DmenuSbuf :<C-U> call <SID>open_buffer_dmenu("sbuf")<CR>
 nnoremap <silent> <Plug>DmenuVertSbuf :<C-U> call <SID>open_buffer_dmenu("vert sbuf")<CR>
+
+command! -nargs=0 DmenuGetCwd :echo <SID>get_cwd()
+command! -nargs=0 DmenuIsRepo :echo <SID>is_repo(<SID>get_cwd())
