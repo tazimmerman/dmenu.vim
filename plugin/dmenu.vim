@@ -76,7 +76,7 @@ function! s:get_dmenu_cfg()
     endif
 
     if !has_key(g:dmenu, 'default_cmd')
-        let g:dmenu.cmd='find .'
+        let g:dmenu.default_cmd='find .'
     endif
 
     if !has_key(g:dmenu, 'git_cmd')
