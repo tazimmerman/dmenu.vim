@@ -134,6 +134,21 @@ function! s:get_dmenu_cmd(cfg, prompt)
     let cmd .= " -sb \"" . get(a:cfg, 'select_bg') . "\""
     let cmd .= " -sf \"" . get(a:cfg, 'select_fg') . "\""
     let cmd .= " -p " . a:prompt
+
+    if has_key(a:cfg, 'font_name')
+        let cmd .= " -fn \"" . get(a:cfg, 'font_name') . "\""
+    endif
+
+    " Extended Edition {{{
+    if get(a:cfg, 'fuzzy_match', 0)
+        let cmd .= " -z "
+    endif
+
+    if get(a:cfg, 'filter_mode', 0)
+        let cmd .= " -r "
+    endif
+    " }}}
+
     return cmd
 endfunction
 " }}}
