@@ -1,0 +1,153 @@
+*dmenu.txt* For Vim version 7.0 Last change: 2018 August 13
+
+==============================================================================
+CONTENTS
+
+    1. Introduction .................... |DmenuIntro|
+    2. Usage ........................... |DmenuUsage|
+        2.1 Mappings ................... |DmenuMappings|
+        2.2 Commands ................... |DmenuCommands|
+    3. Configuration ................... |DmenuConfig|
+    4. License ......................... |DmenuLicense|
+    5. Credits ......................... |DmenuCredits|
+
+==============================================================================
+1. Introduction                                                   *DmenuIntro*
+
+This plugin leverages dmenu to quickly open files and switch to buffers.
+
+==============================================================================
+2. Usage                                                          *DmenuUsage*
+
+------------------------------------------------------------------------------
+2.1 Mappings                                                   *DmenuMappings*
+
+DmenuEdit                                                          *DmenuEdit*
+
+    Open a file using the |:edit| command.
+
+DmenuSplit                                                        *DmenuSplit*
+
+    Open a file using the |:split| command.
+
+DmenuVsplit                                                      *DmenuVsplit*
+
+    Open a file using the |:vsplit| command.
+
+DmenuBuf                                                            *DmenuBuf*
+
+    Open a buffer using the |:buffer| command.
+
+DmenuSbuf                                                          *DmenuSbuf*
+
+    Open a buffer using the |:sbuffer| command.
+
+DmenuVertSbuf                                                  *DmenuVertSbuf*
+
+    Open a buffer using the |:vertical sbuffer| command.
+
+Dmenu.vim also provides |<Plug>| mappings for these commands.
+
+------------------------------------------------------------------------------
+2.2 Commands                                                   *DmenuCommands*
+
+DmenuGetCwd                                                      *DmenuGetCwd*
+
+    Return the current working directory as determined by the plugin.
+
+DmenuGetRepoInfo                                            *DmenuGetRepoInfo*
+
+    Return the current repository info or `{}` if the current working
+    directory is not part of a repository.
+
+==============================================================================
+3. Configuration                                                 *DmenuConfig*
+
+------------------------------------------------------------------------------
+3.1 g:dmenu.default_cmd
+
+Set this to change the find command used outside of a code repository: >
+
+    let g:dmenu.default_cmd = 'find .'
+
+------------------------------------------------------------------------------
+3.2 g:dmenu.git_cmd
+
+Set this to change the find command used within a git repository: >
+
+    let g:dmenu.git_cmd = 'git ls-files'
+
+------------------------------------------------------------------------------
+3.3 g:dmenu.hg_cmd
+
+Set this to change the find command used within a mercurial repository: >
+
+    let g:dmenu.hg_cmd = 'hg manifest'
+
+------------------------------------------------------------------------------
+3.4 g:dmenu.svn_cmd
+
+Set this to change the find command used within a svn repository: >
+
+    let g:dmenu.svn_cmd = 'svn list'
+
+------------------------------------------------------------------------------
+3.5 g:dmenu.menu_bg
+
+Set this to change the background color of the menu. Defaults to the
+background color of |hl-Pmenu|.
+
+------------------------------------------------------------------------------
+3.6 g:dmenu.menu_fg
+
+Set this to change the foreground color of the menu. Defaults to the
+foreground color of |hl-Pmenu|.
+
+------------------------------------------------------------------------------
+3.7 g:dmenu.select_bg
+
+Set this to change the background color of the selected menu item. Defaults
+to the background color of |hl-PmenuSel|.
+
+------------------------------------------------------------------------------
+3.8 g:dmenu.select_fg
+
+Set this to change the foreground color of the selected menu item. Defaults
+to the foreground color of |hl-PmenuSel|.
+
+------------------------------------------------------------------------------
+3.9 g:dmenu.max_lines
+
+Set this to change the number of lines displayed by dmenu: >
+
+    let g:dmenu.max_lines = 10
+
+------------------------------------------------------------------------------
+3.10 g:dmenu.bottom_menu
+
+Set this to 1 to display the menu on the bottom of the screen: >
+
+    let g:dmenu.bottom_menu = 1
+
+------------------------------------------------------------------------------
+3.11 g:dmenu.case_insensitive
+
+Set this to 0 to disable case insensitive searches: >
+
+    let g:dmenu.case_insensitive = 0
+
+==============================================================================
+4. License                                                      *DmenuLicense*
+
+Dmenu.vim is MIT licensed.
+
+==============================================================================
+5. Credits                                                      *DmenuCredits*
+
+Dmenu.vim is a blatant rip-off of this post:
+
+    http://leafo.net/posts/using_dmenu_to_open_quickly.html
+
+==============================================================================
+
+" vim: textwidth=78 tabstop=4 filetype=help expandtab
