@@ -1,4 +1,4 @@
-*dmenu.txt* For Vim version 7.0 Last change: 2018 August 13
+*dmenu.txt* For Vim version 7.0 Last change: 2018 August 14
 
 ==============================================================================
 CONTENTS
@@ -135,6 +135,13 @@ Set this to 1 to display the menu on the bottom of the screen: >
 Set this to 0 to disable case insensitive searches: >
 
     let g:dmenu.case_insensitive = 0
+
+------------------------------------------------------------------------------
+3.12 g:dmenu.font_name
+
+Set this to change the menu font (the value is a XFT font name): >
+
+    let g:dmenu.font_name = "mononoki:size=11"
 
 ==============================================================================
 4. License                                                      *DmenuLicense*
